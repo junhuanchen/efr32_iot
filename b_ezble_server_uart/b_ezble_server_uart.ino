@@ -66,18 +66,18 @@ struct BLEHandler {
       char c = (char)ezBLE.read();
       Serial.print(c);
 
-      if (c == '\n') { // 如果接收到换行符
-        // 处理接收到的完整字符串
-        if (handler->receivedData.length() > 0) {
-          // 假设接收到的字符串直接作为新的服务名称
-          handler->receivedData.toCharArray(bleConfig.serviceName, sizeof(bleConfig.serviceName));
-          // 重启设备
-          handler->restart();
-        }
-        handler->receivedData = ""; // 清空接收缓冲区
-      } else {
-        handler->receivedData += c; // 将字符追加到接收缓冲区
-      }
+      // if (c == '\n') { // 如果接收到换行符
+      //   // 处理接收到的完整字符串
+      //   if (handler->receivedData.length() > 0) {
+      //     // 假设接收到的字符串直接作为新的服务名称
+      //     handler->receivedData.toCharArray(bleConfig.serviceName, sizeof(bleConfig.serviceName));
+      //     // 重启设备
+      //     handler->restart();
+      //   }
+      //   handler->receivedData = ""; // 清空接收缓冲区
+      // } else {
+      //   handler->receivedData += c; // 将字符追加到接收缓冲区
+      // }
     }
   }
 
@@ -138,11 +138,11 @@ struct BLEHandler {
       return;
     }
 
-    char buffer[128];
-    sprintf(buffer, "%d 0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz\n", millis());
-    send(buffer); // 发送数据
-    Serial.printf("%d Sending data over ezBLE\n", millis());
-    delay(100);
+    // char buffer[128];
+    // sprintf(buffer, "%d 0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz\n", millis());
+    // send(buffer); // 发送数据
+    // Serial.printf("%d Sending data over ezBLE\n", millis());
+    // delay(100);
   }
 };
 

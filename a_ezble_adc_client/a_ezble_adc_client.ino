@@ -102,20 +102,23 @@ struct BLEHandler {
   // 处理串口输入
   void handleSerialInput() {
     if (Serial.available()) {
-      char c = Serial.read();
-      if (c == '\n') { // 如果接收到换行符
-        // 处理串口接收到的完整字符串
-        if (serialData.length() > 0) {
-          // 假设串口接收到的字符串直接作为新的服务名称
-          serialData.toCharArray(bleConfig.serviceName, sizeof(bleConfig.serviceName));
-          // 将新配置写入EEPROM
-          EEPROM.put(0, bleConfig);
-          // 重启设备
-          restart();
+      while (Serial.available())
+      {
+        char c = Serial.read();
+        if (c == '\n') { // 如果接收到换行符
+          // 处理串口接收到的完整字符串
+          if (serialData.length() > 0) {
+            // 假设串口接收到的字符串直接作为新的服务名称
+            serialData.toCharArray(bleConfig.serviceName, sizeof(bleConfig.serviceName));
+            // 将新配置写入EEPROM
+            EEPROM.put(0, bleConfig);
+            // 重启设备
+            restart();
+          }
+          serialData = ""; // 清空串口接收缓冲区
+        } else {
+          serialData += c; // 将字符追加到串口接收缓冲区
         }
-        serialData = ""; // 清空串口接收缓冲区
-      } else {
-        serialData += c; // 将字符追加到串口接收缓冲区
       }
     }
   }
@@ -142,11 +145,11 @@ struct BLEHandler {
       return;
     }
 
-    char buffer[128];
-    sprintf(buffer, "%d 0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz\n", millis());
-    send(buffer); // 发送数据
-    Serial.printf("%d Sending data over ezBLE\n", millis());
-    delay(100);
+    // char buffer[128];
+    // sprintf(buffer, "%d 0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz\n", millis());
+    // send(buffer); // 发送数据
+    // Serial.printf("%d Sending data over ezBLE\n", millis());
+    // delay(100);
   }
 };
 
@@ -241,10 +244,12 @@ void setup() {
 }
 
 void loop() {
+
     BLEHandler::getInstance()->loop(); // BLE主循环
     // 如果设备未连接，不执行后续操作
     if (!BLEHandler::getInstance()->isConnected) {
       return;
     }
+    
     adcController.loop(); // ADC主循环
 }
