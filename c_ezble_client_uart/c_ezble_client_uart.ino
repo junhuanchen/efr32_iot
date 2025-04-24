@@ -1,4 +1,3 @@
-
 #include <ezBLE.h>
 #include <EEPROM.h>
 #include <WatchdogTimer.h> // 引入看门狗库
@@ -16,16 +15,14 @@ struct BLEHandler {
   String receivedData;          // 用于存储接收到的数据
   String serialData;            // 用于存储串口接收到的数据
   bool isConnected;             // 用于标记BLE设备是否连接
-  // static const size_t data_buffer_size = 128*1024u;
-  // RingBufferN<data_buffer_size> data;
 
   // 私有构造函数，防止外部直接创建实例
   BLEHandler() {
-    Serial.begin(115200);
+    Serial.begin(115200); // 初始化主串口
+    Serial1.begin(115200); // 初始化串口1
     Serial.println("ezBLE dls client");
     Serial.println(__DATE__); // 打印编译日期
     Serial.println(__TIME__); // 打印编译时间
-    // Serial.printf("EEPROM.length() %d\r\n", EEPROM.length());
     // 从EEPROM读取配置
     EEPROM.get(0, bleConfig);
     if (strlen(bleConfig.serviceName) == 0) {
@@ -116,6 +113,23 @@ struct BLEHandler {
     }
   }
 
+  // 处理串口1输入
+  void handleSerial1Input() {
+    if (Serial1.available()) {
+      char c = Serial1.read();
+      if (c == '\n') { // 如果接收到换行符
+        // 将串口1接收到的完整字符串发送到BLE
+        if (serialData.length() > 0) {
+          send(serialData.c_str());
+          Serial.printf("Forwarding data to BLE: %s\n", serialData.c_str());
+          serialData = ""; // 清空串口接收缓冲区
+        }
+      } else {
+        serialData += c; // 将字符追加到串口接收缓冲区
+      }
+    }
+  }
+
   // 主循环
   void loop() {
     // 喂狗，防止看门狗触发重启
@@ -123,6 +137,9 @@ struct BLEHandler {
 
     // 处理串口输入
     handleSerialInput();
+
+    // 处理串口1输入
+    handleSerial1Input();
 
     // 检查BLE设备是否连接
     if (!isConnected && ezBLE.connected()) {
@@ -138,11 +155,11 @@ struct BLEHandler {
       return;
     }
 
-    char buffer[128];
-    sprintf(buffer, "%d 0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz\n", millis());
-    send(buffer); // 发送数据
-    Serial.printf("%d Sending data over ezBLE\n", millis());
-    delay(100);
+    // char buffer[128];
+    // sprintf(buffer, "%d 0123456789abcdefghijklmnopqrstuvwsyz0123456789abcdefghijklmnopqrstuvwsyz\n", millis());
+    // send(buffer); // 发送数据
+    // Serial.printf("%d Sending data over ezBLE\n", millis());
+    // delay(100);
   }
 };
 
