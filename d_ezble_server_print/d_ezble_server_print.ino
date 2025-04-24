@@ -1,4 +1,3 @@
-
 #include <ezBLE.h>
 #include <EEPROM.h>
 #include <WatchdogTimer.h> // 引入看门狗库
@@ -16,16 +15,15 @@ struct BLEHandler {
   String receivedData;          // 用于存储接收到的数据
   String serialData;            // 用于存储串口接收到的数据
   bool isConnected;             // 用于标记BLE设备是否连接
-  // static const size_t data_buffer_size = 128*1024u;
-  // RingBufferN<data_buffer_size> data;
 
   // 私有构造函数，防止外部直接创建实例
   BLEHandler() {
-    Serial.begin(115200);
+    Serial.begin(115200); // 初始化串口
+    Serial1.begin(115200); // 初始化Serial1
     Serial.println("ezBLE dls server");
     Serial.println(__DATE__); // 打印编译日期
     Serial.println(__TIME__); // 打印编译时间
-    // Serial.printf("EEPROM.length() %d\r\n", EEPROM.length());
+
     // 从EEPROM读取配置
     EEPROM.get(0, bleConfig);
     if (strlen(bleConfig.serviceName) == 0) {
@@ -64,20 +62,8 @@ struct BLEHandler {
 
     while (ezBLE.available()) {
       char c = (char)ezBLE.read();
-      Serial.print(c);
-
-      // if (c == '\n') { // 如果接收到换行符
-      //   // 处理接收到的完整字符串
-      //   if (handler->receivedData.length() > 0) {
-      //     // 假设接收到的字符串直接作为新的服务名称
-      //     handler->receivedData.toCharArray(bleConfig.serviceName, sizeof(bleConfig.serviceName));
-      //     // 重启设备
-      //     handler->restart();
-      //   }
-      //   handler->receivedData = ""; // 清空接收缓冲区
-      // } else {
-      //   handler->receivedData += c; // 将字符追加到接收缓冲区
-      // }
+      Serial.print(c); // 在串口监视器中打印接收到的数据
+      Serial1.print(c); // 将接收到的数据通过Serial1输出
     }
   }
 
