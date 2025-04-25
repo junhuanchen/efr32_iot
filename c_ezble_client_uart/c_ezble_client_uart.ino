@@ -140,7 +140,7 @@ struct BLEHandler {
 
     // 处理串口1输入
     handleSerial1Input();
-
+    
     // 检查BLE设备是否连接
     if (!isConnected && ezBLE.connected()) {
       isConnected = true;

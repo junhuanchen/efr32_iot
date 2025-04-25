@@ -13,6 +13,7 @@ BLEConfig bleConfig; // 全局BLE配置实例
 struct BLEHandler {
   static BLEHandler* instance; // 单例实例指针
   String receivedData;          // 用于存储接收到的数据
+  String serialData;            // 用于存储串口接收到的数据
   String fixedLengthString;     // 固定长度字符串
   bool isConnected;             // 用于标记BLE设备是否连接
 

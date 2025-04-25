@@ -234,7 +234,7 @@ struct ADCController {
 };
 
 // 创建ADCController实例，指定相关参数
-ADCController adcController(PA7, 20, 50, 400, 100);
+ADCController adcController(PA4, 20, 50, 400, 100);
 
 void setup() {
     Serial.println(__DATE__); // 打印编译日期
