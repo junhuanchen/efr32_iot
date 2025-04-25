@@ -19,7 +19,8 @@ enum State {
 };
 
 // 定义 RingBuffer 的大小
-static const size_t data_buffer_size = 512u;
+static const size_t data_buffer_size = 64*1024u; // xg24explorerkit
+// static const size_t data_buffer_size = 2*1024u; // bgm220
 
 struct SerialProtocol {
     // 发送数据
@@ -63,7 +64,7 @@ struct SerialProtocol {
 
             uint8_t byte = Serial1.read();
             _lastActivityTime = millis(); // 更新最后活动时间
-            Serial.printf("byte %d _state %d \r\n", byte, _state);
+            // Serial.printf("byte %d _state %d \r\n", byte, _state);
 
             switch (_state) {
                 case WAIT_FOR_HEADER:
@@ -97,12 +98,12 @@ struct SerialProtocol {
                         calculatedChecksum += tmp;
                         data[i++] = tmp;
                     }
-                    Serial.printf("byte %d calculatedChecksum %d \r\n", byte, calculatedChecksum);
+                    // Serial.printf("byte %d calculatedChecksum %d \r\n", byte, calculatedChecksum);
                     if (calculatedChecksum == byte) {
                         // 校验成功
                         length = _length;
                         reset();
-                        Serial.println("have data");
+                        // Serial.println("have data");
                         return true;
                     } else {
                         // 校验失败，重置状态机
